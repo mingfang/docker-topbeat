@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#sv start elasticsearch || exit 1
+
+source /etc/envvars
+env
+
+if [ -n "$BEAT_NAME" ]; then
+  sed -i -e "s|#name:|name: $BEAT_NAME|" /etc/topbeat/topbeat.yml
+fi
+
+if [ -n "$PACKETBEAT_SERVICE_HOST" ]; then
+  sed -i -e "s|hosts: .*|hosts: [\"$PACKETBEAT_SERVICE_HOST:9200\"]|" /etc/topbeat/topbeat.yml
+fi
+
+curl -XPUT "http://${PACKETBEAT_SERVICE_HOST}:9200/_template/topbeat" -d@/etc/topbeat/topbeat.template.json
+
+exec 2>&1
+exec topbeat

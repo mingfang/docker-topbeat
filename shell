@@ -1,0 +1,4 @@
+#!/bin/bash
+[[ "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" =~  .*docker-([a-zA-Z0-9_\-]*) ]]
+
+docker run --dns=192.168.1.160 -e BEAT_NAME=`hostname` -e PACKETBEAT_SERVICE_HOST=packetbeat --pid=host -v `pwd`:/docker -w /docker --rm -it ${BASH_REMATCH[1]} /bin/bash
